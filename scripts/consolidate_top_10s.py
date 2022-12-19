@@ -1,6 +1,6 @@
-from scripts.download_top_10s import *
-import os
+from os import path, remove
 import pandas as pd
+from .download_top_10s import *
 
 """
     Description:
@@ -8,10 +8,12 @@ import pandas as pd
 """
 
 class ConsolidateTop10s(DownloadTop10s):
-    def __init__(self, directory):
-        super().__init__(directory)
+    def __init__(self, logger, directory):
+        super().__init__(logger, directory)
 
-        self.excel_file = "SECTSPDR012921Top10.xls"
+        self._log = logger
+
+        self.excel_file = None
 
         self.__excel_columns = ["Company", "Symbol", "Weight"]
         self.__csv_columns = ["Company Name", "Symbol", "Index Weight"]
@@ -36,7 +38,7 @@ class ConsolidateTop10s(DownloadTop10s):
         dataframes = []
 
         for _, sector in enumerate(self._tickers):
-            self.log.info(f"Consolidating holdings for {sector['sector']}")
+            self._log(f"Consolidating holdings for {sector['sector']}")
             excel = pd.read_excel(self.excel_file, index_col=None, sheet_name=sector["index"], names=self.__excel_columns)
             csv = pd.read_csv(path.join(self.__sectors_directory, self._today_string, f"{sector['sector']}-{date.today()}.csv"), skiprows=1, index_col=None, usecols=self.__csv_columns)
             
@@ -58,14 +60,14 @@ class ConsolidateTop10s(DownloadTop10s):
         """
 
         if path.isfile(f"{self.__output_name}{self.__output_extension}"):
-            self.log.info(f"Output file for today {self._today} already exists - deleting existing file")
-            os.remove(f"{self.__output_name}{self.__output_extension}")
+            self._log(f"Output file for today {self._today} already exists - deleting existing file")
+            remove(f"{self.__output_name}{self.__output_extension}")
         
-        self.log.info(f"Creating excel output file")
+        self._log(f"Creating excel output file")
         
         self.__results.to_excel(path.join(f"{self.__output_name}{self.__output_extension}"))
 
-        self.log.info(f"Output file created and saved in /{self.__output_name}{self.__output_extension}")
+        self._log(f"Output file created and saved in /{self.__output_name}{self.__output_extension}")
 
 
     def run_program(self):

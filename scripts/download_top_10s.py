@@ -1,6 +1,5 @@
 import concurrent.futures
 from datetime import date, datetime as dt
-from logs.log_setup import *
 from os import listdir, mkdir, path, remove
 import requests
 import time
@@ -15,10 +14,10 @@ from utils.resources import *
         - One (1) CSV of reconciled Top 10 Holdings from Mark, and Top 10 Holdings from CSVs from website to be distributed to Markit-on-Demand
 """
 
-class DownloadTop10s:
-    def __init__(self, directory):
+class DownloadTop10s():
+    def __init__(self, logger, directory):
 
-        self.log = logging.getLogger(path.basename(__file__))
+        self._log = logger
 
         self._today = date.today()
         self._today_string = self._today.strftime("%Y-%m-%d")
@@ -41,11 +40,11 @@ class DownloadTop10s:
         """
 
         if not path.exists(self._parent_output_directory):
-            self.log.info("/sectors/ directory does not exist - creating directory")
+            self._log("/sectors/ directory does not exist - creating directory")
             mkdir(self._parent_output_directory)
 
         if not path.exists(self._child_output_directory):
-            self.log.info(f"Holdings directory for {self._today} does not exist - creating directory")
+            self._log(f"Holdings directory for {self._today} does not exist - creating directory")
             mkdir(self._child_output_directory)
             self.__download_holdings = True
 
@@ -62,14 +61,14 @@ class DownloadTop10s:
             file_date = dt.strptime(self.__current_holdings[0].split("-", 1)[1][:-4], "%Y-%m-%d").date()
             
             if file_date != self._today:
-                self.log.info(f"Holdings in /sectors/{file_date} folder are outdated - preparing to download new holdings for today ({self._today})")
+                self._log(f"Holdings in /sectors/{file_date} folder are outdated - preparing to download new holdings for today ({self._today})")
                 [remove(path.join(self._output_directory, file)) for file in self.__current_holdings]
                 self.__download_holdings = True
             else:
-                self.log.info(f"Holdings in /sectors/ folder are current ({self._today}) - abort downloading new holdings")
+                self._log(f"Holdings in /sectors/ folder are current ({self._today}) - abort downloading new holdings")
 
         except:
-            self.log.info(f"Holdings not found in /sectors/{self._today_string} folder - preparing to download new holdings from today ({self._today})")
+            self._log(f"Holdings not found in /sectors/{self._today_string} folder - preparing to download new holdings from today ({self._today})")
             self.__download_holdings = True
 
 
@@ -87,7 +86,8 @@ class DownloadTop10s:
 
             finish = time.perf_counter()
 
-            self.log.info(f"Finished fetching all holdings. Took {round(finish - start, 2)} seconds")
+            [self._log(f"{file} downloaded") for file in listdir(self._child_output_directory)]
+            self._log(f"Finished downloading all holdings. Took {round(finish - start, 2)} seconds")
 
 
     def _process_multiple(self, sector):
@@ -97,7 +97,7 @@ class DownloadTop10s:
         """
 
         with requests.get(f"{url}{sector['sector']}") as req:
-            self.log.info(f"Fetching holdings for {sector['sector']}")
+            self._log(f"Fetching holdings for {sector['sector']}", False)
             with open(path.join(self._child_output_directory, f"{sector['sector']}-{date.today()}.csv"), 'wb') as file:    
                 file.write(req.content)
 
