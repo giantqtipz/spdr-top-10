@@ -1,0 +1,8 @@
+.DS_Store
+/output
+/sectors
+__pycache__
+*.log
+*.xls
+*.csv
+*.xlsx
