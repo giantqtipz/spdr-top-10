@@ -29,7 +29,7 @@ class DownloadTop10s():
         self._parent_output_directory = directory
         self._child_output_directory = path.join(self._parent_output_directory, self._today_string)
 
-        self._tickers = [{"sector": sector, "url": f"{url + sector}", "index": ticker} for sector, ticker in tickers.items()] 
+        self._tickers = [{"sector": sector, "url": f"{url + sector}", "index": prop["index"], "title": prop["title"], "disclaimer": disclaimer} for sector, prop in tickers.items()] 
 
 
     def _check_output_path(self):

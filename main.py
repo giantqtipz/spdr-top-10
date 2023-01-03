@@ -24,7 +24,8 @@ class SPDRTop10Generator:
                     ("XLSX", "*.xlsx*"),
                     ("XLS", "*.xls*"),
                     ("LOG", "*.log*")
-                ))
+                )),
+                sg.InputText("Disclaimer Date", size=(14,1), key="-INPUTDATE-")
             ],
             [
                 sg.Exit(), 
@@ -53,7 +54,6 @@ class SPDRTop10Generator:
             Description:
                 - Validates if file exists
         """
-
         if file and path.isfile(file):
             return True
         self._log_process("File doesn't exist")
@@ -95,6 +95,7 @@ class SPDRTop10Generator:
                     if self.__validate_file(values["-INPUT-"]):
                         self._log_process("Consolidating downloaded top 10s with Mark's file.")
                         consolidate_top_10s = ConsolidateTop10s(self._log_process, "output")
+                        consolidate_top_10s.disclaimer_date = values["-INPUTDATE-"]
                         consolidate_top_10s.excel_file = values["-INPUT-"]
                         consolidate_top_10s.run_program()
                 case "Log":
