@@ -10,9 +10,11 @@ Ticker Targeting ads.
 
 1 - Download holdings for each sector from Sector SPDR's website
 
-2 - Upload holdings schedule displayed in print publications
+2 - Upload holdings schedule displayed in print publications from DNA Creative
 
-3 - Consolidate #1 and #2 to create an output to update Ticker Targeting ad disclaimers
+3 - Enter date to be displayed in disclaimers
+
+4 - Consolidate #1 and #2 to create an output to update Ticker Targeting ad disclaimers
 
 ### Packages
 pandas, xlrd, pysimplegui
