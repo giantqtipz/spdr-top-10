@@ -7,3 +7,6 @@ __pycache__
 *.csv
 *.xlsx
 .idea
+build
+dist
+.venv

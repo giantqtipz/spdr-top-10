@@ -13,7 +13,9 @@ class ConsolidateTop10s(DownloadTop10s):
 
         self._log = logger
 
-        self.excel_file = None
+        self.excel_file = ""
+
+        self.disclaimer_date = ""
 
         self.__excel_columns = ["Company", "Symbol", "Weight"]
         self.__csv_columns = ["Company Name", "Symbol", "Index Weight"]
@@ -43,10 +45,12 @@ class ConsolidateTop10s(DownloadTop10s):
             csv = pd.read_csv(path.join(self.__sectors_directory, self._today_string, f"{sector['sector']}-{date.today()}.csv"), skiprows=1, index_col=None, usecols=self.__csv_columns)
             
             vlookup = excel.merge(csv, left_on="Symbol", right_on="Symbol", how="inner").drop(columns=["Company", "Index Weight"])
-            vlookup["Sector"] = sector["index"] # Append a sector column
+            vlookup["Sector"] = sector["sector"].upper() # Append a sector column
             vlookup["Weight"] = vlookup["Weight"].transform(lambda x: '{:,.2%}'.format(x)) # Converts decimal Weights to percentages
-            
+
             vlookup = vlookup.iloc[:, self.__order_columns] # Rearrange columns
+
+            vlookup["Disclaimer"] = [f"{sector['disclaimer'].format(self.disclaimer_date, company, weight, sector['title'])}" for sect, company, weight in zip(vlookup["Sector"], vlookup["Company Name"], vlookup["Weight"])] # Formats disclaimer column
 
             dataframes.append(vlookup)
         
@@ -76,5 +80,5 @@ class ConsolidateTop10s(DownloadTop10s):
 
 
 if __name__ == "__main__":
-    consolidate_top_10s = ConsolidateTop10s("output")
+    consolidate_top_10s = ConsolidateTop10s("")
     consolidate_top_10s.run_program()
