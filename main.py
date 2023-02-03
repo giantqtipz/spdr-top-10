@@ -18,7 +18,7 @@ class SPDRTop10Generator:
 
         self.__layout = [
             [
-                sg.Text("Mark's File:"), 
+                sg.Text("File Upload:"), 
                 sg.Input(key="-INPUT-"), 
                 sg.FileBrowse(file_types=(
                     ("XLSX", "*.xlsx*"),
@@ -33,7 +33,7 @@ class SPDRTop10Generator:
                 sg.Button("Consolidate Top 10s"),
                 sg.Button("Log")
             ],
-            [sg.Multiline("", size=(80, 20), autoscroll=True, key='-LOG-', reroute_stdout=True, reroute_stderr=True)]
+            # [sg.Multiline("", size=(80, 20), autoscroll=True, key='-LOG-', reroute_stdout=True, reroute_stderr=True)]
         ]
 
         self._window = sg.Window("SPDR Top 10 Generator", self.__layout, finalize=True)
@@ -45,8 +45,8 @@ class SPDRTop10Generator:
                 - Logs each process into top10s.log file and logs in real time inside the application 
         """
         self._log.info(text)
-        if print == True:
-            self._window['-LOG-'].update(f"- {text}\n", append=True)
+        # if print == True:
+        #     self._window['-LOG-'].update(f"- {text}\n", append=True)
 
     
     def __validate_file(self, file):
@@ -83,10 +83,12 @@ class SPDRTop10Generator:
             match event:
                 case sg.WIN_CLOSED:
                     self._log_process("Closed application")
+                    self._window.close()
                     break
                 case "Exit":
                     self._log_process("Closed application")
                     self._window.close()
+                    break
                 case "Download New Top 10s":
                     self._log_process(f"Downloading today's top 10s from Sector SPDR's website. Open log for more details.")
                     download_top_10 = DownloadTop10s(self._log_process, "sectors")
