@@ -9,8 +9,10 @@ from setuptools import setup
 APP=["main.py"]
 DATA_FILES=["logs","scripts","utils","README.MD","requirements.txt"]
 OPTIONS={
-    "argv_emulation": True,
-    "iconfile": "assets/spdr.png"
+    "argv_emulation": False,
+    "iconfile": "assets/spdr.png",
+    "includes": ["os", "yaml", "concurrent.futures", "datetime", "time"],
+    "packages": ["pandas", "PySimpleGUI"]
 }
 
 setup(
