@@ -3,7 +3,7 @@ Returns:
     Resource file with URLs to download Top 10 Holdings for each sector
 """
 
-url = "https://www.sectorspdr.com/sectorspdr/IDCO.Client.Spdrs.Index/Export/ExportCsv?symbol="
+url = "https://www.sectorspdrs.com/sectorspdr/IndexHoldings/ExportCsv?symbol="
 
 tickers = {
     "xlc": {
